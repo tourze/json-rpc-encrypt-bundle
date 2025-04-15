@@ -4,5 +4,7 @@ services:
     autowire: true      # Automatically injects dependencies in your services.
     autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
-#  Tourze\JsonRPCEncryptBundle\Command\:
-#    resource: '../../Command/'
+  Tourze\JsonRPCEncryptBundle\EventSubscriber\:
+    resource: '../../EventSubscriber/'
+  Tourze\JsonRPCEncryptBundle\Service\:
+    resource: '../../Service/'
