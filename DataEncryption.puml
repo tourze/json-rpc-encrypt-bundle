@@ -1,0 +1,39 @@
+@startuml 加解密流程
+'https://plantuml.com/sequence-diagram
+
+autonumber
+participant Client
+participant "JsonRPC_Endpoint" as Endpoint
+participant "EncryptionService" as Encrypt
+participant "方法类" as Method
+participant "DecryptionService" as Decrypt
+database "数据库" as DB
+
+== 请求加密流程 ==
+Client -> Client: 准备敏感数据
+Client -> Client: 使用对称密钥加密数据
+Client -> Endpoint: 发送加密后的Payload
+
+Endpoint -> Encrypt: 检测加密标记
+Encrypt -> Encrypt: 使用对称密钥解密数据
+Encrypt -> Method: 传递解密后的原始数据
+
+== 业务处理流程 ==
+Method -> Method: 处理业务逻辑
+Method -> DB: 存储加密后的敏感数据
+DB --> Method: 返回处理结果
+
+== 响应加密流程 ==
+Method -> Method: 准备返回数据
+Method -> Decrypt: 检查是否包含敏感数据
+Decrypt -> Decrypt: 使用对称密钥加密敏感字段
+Decrypt -> Endpoint: 返回处理后的数据
+Endpoint -> Client: 响应加密后的结果
+
+note right of Client
+  1. 敏感数据在传输过程中始终保持加密状态
+  2. 使用对称加密(如AES)保护数据安全
+  3. 密钥管理和分发需要额外的安全机制
+end note
+
+@enduml
