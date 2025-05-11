@@ -24,4 +24,4 @@ class MockJsonRpcEndpoint implements EndpointInterface
     {
         // 无需实现
     }
-} 
+}
