@@ -2,15 +2,21 @@
 
 namespace Tourze\JsonRPCEncryptBundle\Tests\Integration;
 
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Tourze\IntegrationTestKernel\IntegrationTestKernel;
 use Tourze\JsonRPC\Core\Event\RequestStartEvent;
 use Tourze\JsonRPC\Core\Event\ResponseSendingEvent;
+use Tourze\JsonRPCCallerBundle\JsonRPCCallerBundle;
 use Tourze\JsonRPCEncryptBundle\EventSubscriber\EncryptSubscriber;
+use Tourze\JsonRPCEncryptBundle\JsonRPCEncryptBundle;
 use Tourze\JsonRPCEncryptBundle\Service\Encryptor;
 use Tourze\JsonRPCEncryptBundle\Tests\Integration\Service\MockApiCallerRepository;
+use Tourze\JsonRPCEndpointBundle\JsonRPCEndpointBundle;
 
 /**
  * JsonRPC加解密端到端集成测试
@@ -28,6 +34,28 @@ class EndToEndJsonRpcEncryptionTest extends KernelTestCase
     protected static function getKernelClass(): string
     {
         return IntegrationTestKernel::class;
+    }
+
+    protected static function createKernel(array $options = []): IntegrationTestKernel
+    {
+        $appendBundles = [
+            FrameworkBundle::class => ['all' => true],
+            DoctrineBundle::class => ['all' => true],
+            JsonRPCCallerBundle::class => ['all' => true],
+            JsonRPCEndpointBundle::class => ['all' => true],
+            JsonRPCEncryptBundle::class => ['all' => true],
+        ];
+        
+        $entityMappings = [
+            'Tourze\JsonRPCEncryptBundle\Tests\Integration\Entity' => __DIR__ . '/Entity',
+        ];
+
+        return new IntegrationTestKernel(
+            $options['environment'] ?? 'test',
+            $options['debug'] ?? true,
+            $appendBundles,
+            $entityMappings
+        );
     }
 
     protected function setUp(): void

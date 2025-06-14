@@ -2,7 +2,9 @@
 
 namespace Tourze\JsonRPCEncryptBundle\Tests\Integration\EventSubscriber;
 
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Psr\Log\LoggerInterface;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,10 +12,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tourze\JsonRPC\Core\Event\RequestStartEvent;
 use Tourze\JsonRPC\Core\Event\ResponseSendingEvent;
+use Tourze\JsonRPCCallerBundle\JsonRPCCallerBundle;
 use Tourze\JsonRPCEncryptBundle\EventSubscriber\EncryptSubscriber;
+use Tourze\JsonRPCEncryptBundle\JsonRPCEncryptBundle;
 use Tourze\JsonRPCEncryptBundle\Service\Encryptor;
-use Tourze\JsonRPCEncryptBundle\Tests\Integration\IntegrationTestKernel;
 use Tourze\JsonRPCEncryptBundle\Tests\Integration\Service\MockApiCallerRepository;
+use Tourze\JsonRPCEndpointBundle\JsonRPCEndpointBundle;
 
 /**
  * EncryptSubscriber集成测试
@@ -29,7 +33,29 @@ class EncryptSubscriberIntegrationTest extends KernelTestCase
 
     protected static function getKernelClass(): string
     {
-        return IntegrationTestKernel::class;
+        return \Tourze\JsonRPCEncryptBundle\Tests\Integration\TestKernel::class;
+    }
+
+    protected static function createKernel(array $options = []): \Tourze\JsonRPCEncryptBundle\Tests\Integration\TestKernel
+    {
+        $appendBundles = [
+            FrameworkBundle::class => ['all' => true],
+            DoctrineBundle::class => ['all' => true],
+            JsonRPCCallerBundle::class => ['all' => true],
+            JsonRPCEndpointBundle::class => ['all' => true],
+            JsonRPCEncryptBundle::class => ['all' => true],
+        ];
+        
+        $entityMappings = [
+            'Tourze\JsonRPCEncryptBundle\Tests\Integration\Entity' => dirname(__DIR__) . '/Entity',
+        ];
+
+        return new \Tourze\JsonRPCEncryptBundle\Tests\Integration\TestKernel(
+            $options['environment'] ?? 'test',
+            $options['debug'] ?? true,
+            $appendBundles,
+            $entityMappings
+        );
     }
 
     protected function setUp(): void
