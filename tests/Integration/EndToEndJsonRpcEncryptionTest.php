@@ -5,6 +5,7 @@ namespace Tourze\JsonRPCEncryptBundle\Tests\Integration;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -40,6 +41,7 @@ class EndToEndJsonRpcEncryptionTest extends KernelTestCase
     {
         $appendBundles = [
             FrameworkBundle::class => ['all' => true],
+            SecurityBundle::class => ['all' => true],
             DoctrineBundle::class => ['all' => true],
             JsonRPCCallerBundle::class => ['all' => true],
             JsonRPCEndpointBundle::class => ['all' => true],

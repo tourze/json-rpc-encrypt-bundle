@@ -6,9 +6,10 @@ use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request;
-use Tourze\JsonRPC\Core\Contracts\EndpointInterface;
+use Tourze\IntegrationTestKernel\IntegrationTestKernel;
 use Tourze\JsonRPCCallerBundle\JsonRPCCallerBundle;
 use Tourze\JsonRPCEncryptBundle\JsonRPCEncryptBundle;
 use Tourze\JsonRPCEncryptBundle\Service\Encryptor;
@@ -25,19 +26,19 @@ class JsonRpcEncryptIntegrationTest extends KernelTestCase
     private EntityManagerInterface $entityManager;
     private MockApiCallerRepository $apiCallerRepository;
     private Encryptor $encryptor;
-    private EndpointInterface $endpoint;
     private string $testAppId = 'test-app-id';
     private string $testAppSecret = 'test-app-secret';
 
     protected static function getKernelClass(): string
     {
-        return TestKernel::class;
+        return IntegrationTestKernel::class;
     }
 
-    protected static function createKernel(array $options = []): TestKernel
+    protected static function createKernel(array $options = []): IntegrationTestKernel
     {
         $appendBundles = [
             FrameworkBundle::class => ['all' => true],
+            SecurityBundle::class => ['all' => true],
             DoctrineBundle::class => ['all' => true],
             JsonRPCCallerBundle::class => ['all' => true],
             JsonRPCEndpointBundle::class => ['all' => true],
@@ -48,7 +49,7 @@ class JsonRpcEncryptIntegrationTest extends KernelTestCase
             'Tourze\JsonRPCEncryptBundle\Tests\Integration\Entity' => __DIR__ . '/Entity',
         ];
 
-        return new TestKernel(
+        return new IntegrationTestKernel(
             $options['environment'] ?? 'test',
             $options['debug'] ?? true,
             $appendBundles,
@@ -64,7 +65,6 @@ class JsonRpcEncryptIntegrationTest extends KernelTestCase
 
         // 获取服务
         $this->entityManager = $container->get('doctrine.orm.entity_manager');
-        $this->endpoint = $container->get(EndpointInterface::class);
 
         // 创建模拟仓库
         $this->apiCallerRepository = new MockApiCallerRepository();

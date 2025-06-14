@@ -6,10 +6,12 @@ use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Tourze\IntegrationTestKernel\IntegrationTestKernel;
 use Tourze\JsonRPC\Core\Event\RequestStartEvent;
 use Tourze\JsonRPC\Core\Event\ResponseSendingEvent;
 use Tourze\JsonRPCCallerBundle\JsonRPCCallerBundle;
@@ -33,13 +35,14 @@ class EncryptSubscriberIntegrationTest extends KernelTestCase
 
     protected static function getKernelClass(): string
     {
-        return \Tourze\JsonRPCEncryptBundle\Tests\Integration\TestKernel::class;
+        return IntegrationTestKernel::class;
     }
 
-    protected static function createKernel(array $options = []): \Tourze\JsonRPCEncryptBundle\Tests\Integration\TestKernel
+    protected static function createKernel(array $options = []): IntegrationTestKernel
     {
         $appendBundles = [
             FrameworkBundle::class => ['all' => true],
+            SecurityBundle::class => ['all' => true],
             DoctrineBundle::class => ['all' => true],
             JsonRPCCallerBundle::class => ['all' => true],
             JsonRPCEndpointBundle::class => ['all' => true],
@@ -50,7 +53,7 @@ class EncryptSubscriberIntegrationTest extends KernelTestCase
             'Tourze\JsonRPCEncryptBundle\Tests\Integration\Entity' => dirname(__DIR__) . '/Entity',
         ];
 
-        return new \Tourze\JsonRPCEncryptBundle\Tests\Integration\TestKernel(
+        return new IntegrationTestKernel(
             $options['environment'] ?? 'test',
             $options['debug'] ?? true,
             $appendBundles,
