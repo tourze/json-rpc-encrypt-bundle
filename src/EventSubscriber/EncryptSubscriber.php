@@ -39,7 +39,7 @@ class EncryptSubscriber implements EventSubscriberInterface
     public function onRequestStart(RequestStartEvent $event): void
     {
         $request = $this->requestStack->getMainRequest();
-        if (!$request) {
+        if ($request === null) {
             return;
         }
         if (!$this->encryptor->shouldEncrypt($request)) {
@@ -78,7 +78,7 @@ class EncryptSubscriber implements EventSubscriberInterface
     public function onResponseSending(ResponseSendingEvent $event): void
     {
         $request = $this->requestStack->getMainRequest();
-        if (!$request) {
+        if ($request === null) {
             return;
         }
         if (!$this->encryptor->shouldEncrypt($request)) {

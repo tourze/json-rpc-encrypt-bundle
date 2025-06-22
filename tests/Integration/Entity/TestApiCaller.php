@@ -2,28 +2,29 @@
 
 namespace Tourze\JsonRPCEncryptBundle\Tests\Integration\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: 'test_api_caller')]
-class TestApiCaller
+#[ORM\Table(name: 'test_api_caller', options: ['comment' => '测试API调用者'])]
+class TestApiCaller implements \Stringable
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string')]
+    #[ORM\Column(type: Types::STRING, options: ['comment' => '主键ID'])]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator('doctrine.uuid_generator')]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 60)]
+    #[ORM\Column(type: Types::STRING, length: 60, options: ['comment' => '标题'])]
     private string $title;
 
-    #[ORM\Column(type: 'string', length: 64, unique: true)]
+    #[ORM\Column(type: Types::STRING, length: 64, unique: true, options: ['comment' => '应用ID'])]
     private string $appId;
 
-    #[ORM\Column(type: 'string', length: 120)]
+    #[ORM\Column(type: Types::STRING, length: 120, options: ['comment' => '应用密钥'])]
     private string $appSecret;
 
-    #[ORM\Column(type: 'boolean')]
+    #[ORM\Column(type: Types::BOOLEAN, options: ['comment' => '是否有效'])]
     private bool $valid = true;
 
     public function getId(): string
@@ -73,5 +74,16 @@ class TestApiCaller
     {
         $this->valid = $valid;
         return $this;
+    }
+
+    public function setId(string $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->title . ' (' . $this->appId . ')';
     }
 } 

@@ -37,7 +37,7 @@ class Encryptor
             'appId' => $appId,
             'valid' => true,
         ]);
-        if (!$caller) {
+        if ($caller === null) {
             throw new EncryptAppIdNotFoundException();
         }
 
@@ -51,7 +51,7 @@ class Encryptor
             'appId' => $appId,
             'valid' => true,
         ]);
-        if (!$caller) {
+        if ($caller === null) {
             throw new EncryptAppIdNotFoundException();
         }
 

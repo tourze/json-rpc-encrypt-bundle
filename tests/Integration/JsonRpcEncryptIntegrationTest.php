@@ -3,7 +3,6 @@
 namespace Tourze\JsonRPCEncryptBundle\Tests\Integration;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
@@ -23,7 +22,6 @@ use Tourze\JsonRPCEndpointBundle\JsonRPCEndpointBundle;
  */
 class JsonRpcEncryptIntegrationTest extends KernelTestCase
 {
-    private EntityManagerInterface $entityManager;
     private MockApiCallerRepository $apiCallerRepository;
     private Encryptor $encryptor;
     private string $testAppId = 'test-app-id';
@@ -61,10 +59,6 @@ class JsonRpcEncryptIntegrationTest extends KernelTestCase
     {
         // 启动Symfony测试内核
         self::bootKernel();
-        $container = static::getContainer();
-
-        // 获取服务
-        $this->entityManager = $container->get('doctrine.orm.entity_manager');
 
         // 创建模拟仓库
         $this->apiCallerRepository = new MockApiCallerRepository();
