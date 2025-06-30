@@ -7,6 +7,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Tourze\JsonRPCEncryptBundle\Tests\Integration\Entity\TestApiCaller;
 
 /**
+ * @internal
  * @method TestApiCaller|null find($id, $lockMode = null, $lockVersion = null)
  * @method TestApiCaller|null findOneBy(array $criteria, array $orderBy = null)
  * @method TestApiCaller[]    findAll()

@@ -7,6 +7,7 @@ use Tourze\JsonRPC\Core\Contracts\EndpointInterface;
 
 /**
  * Mock的JsonRpc端点实现，用于测试
+ * @internal
  */
 class MockJsonRpcEndpoint implements EndpointInterface
 {

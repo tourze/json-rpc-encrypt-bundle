@@ -9,6 +9,7 @@ use Tourze\JsonRPC\Core\Contracts\EndpointInterface;
 
 /**
  * JsonRPC加密包测试专用内核
+ * @internal
  */
 class TestKernel extends IntegrationTestKernel
 {

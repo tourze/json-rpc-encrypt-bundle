@@ -5,6 +5,9 @@ namespace Tourze\JsonRPCEncryptBundle\Tests\Integration\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * @internal
+ */
 #[ORM\Entity]
 #[ORM\Table(name: 'test_api_caller', options: ['comment' => '测试API调用者'])]
 class TestApiCaller implements \Stringable
@@ -12,7 +15,7 @@ class TestApiCaller implements \Stringable
     #[ORM\Id]
     #[ORM\Column(type: Types::STRING, options: ['comment' => '主键ID'])]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator('doctrine.uuid_generator')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private string $id;
 
     #[ORM\Column(type: Types::STRING, length: 60, options: ['comment' => '标题'])]

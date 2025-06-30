@@ -7,6 +7,7 @@ use Tourze\JsonRPCCallerBundle\Repository\ApiCallerRepository;
 
 /**
  * 用于测试的ApiCallerRepository模拟类
+ * @internal
  */
 class MockApiCallerRepository extends ApiCallerRepository
 {
