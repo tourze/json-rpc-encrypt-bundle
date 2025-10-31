@@ -1,0 +1,6 @@
+services:
+  # Mock LinkGenerator for testing
+  Tourze\JsonRPCEncryptBundle\Tests\Service\MockLinkGenerator:
+    tags: ['controller.service_arguments']
+    autowire: true
+    autoconfigure: true

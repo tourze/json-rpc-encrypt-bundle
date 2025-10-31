@@ -3,15 +3,17 @@
 namespace Tourze\JsonRPCEncryptBundle\Service;
 
 use Symfony\Component\HttpFoundation\Request;
-use Tourze\JsonRPCCallerBundle\Repository\ApiCallerRepository;
+use Tourze\AccessKeyBundle\Service\ApiCallerService;
 use Tourze\JsonRPCEncryptBundle\Exception\EncryptAppIdMissingException;
 use Tourze\JsonRPCEncryptBundle\Exception\EncryptAppIdNotFoundException;
+use Tourze\JsonRPCEncryptBundle\Exception\EncryptAppSecretMissingException;
+use Tourze\JsonRPCEncryptBundle\Exception\EncryptionFailedException;
 
 class Encryptor
 {
     public const APPID_HEADER = 'Encrypt-AppID';
 
-    public function __construct(private readonly ApiCallerRepository $apiCallerRepository)
+    public function __construct(private readonly ApiCallerService $apiCallerService)
     {
     }
 
@@ -23,7 +25,7 @@ class Encryptor
     public function getRequestEncryptAppId(Request $request): string
     {
         $EncryptAppID = $request->headers->get(self::APPID_HEADER);
-        if (empty($EncryptAppID)) {
+        if (null === $EncryptAppID || '' === $EncryptAppID) {
             throw new EncryptAppIdMissingException();
         }
 
@@ -33,29 +35,33 @@ class Encryptor
     public function encryptByRequest(Request $request, string $rawString): string
     {
         $appId = $this->getRequestEncryptAppId($request);
-        $caller = $this->apiCallerRepository->findOneBy([
-            'appId' => $appId,
-            'valid' => true,
-        ]);
-        if ($caller === null) {
+        $caller = $this->apiCallerService->findValidApiCallerByAppId($appId);
+        if (null === $caller) {
             throw new EncryptAppIdNotFoundException();
         }
 
-        return $this->encryptData($rawString, $caller->getAppSecret(), $caller->getAppId());
+        $appSecret = $caller->getAppSecret();
+        if (null === $appSecret || '' === $appSecret) {
+            throw new EncryptAppSecretMissingException('AppSecret cannot be empty for encryption');
+        }
+
+        return $this->encryptData($rawString, $appSecret, $caller->getAppId());
     }
 
     public function decryptByRequest(Request $request, string $cipherText): string|false
     {
         $appId = $this->getRequestEncryptAppId($request);
-        $caller = $this->apiCallerRepository->findOneBy([
-            'appId' => $appId,
-            'valid' => true,
-        ]);
-        if ($caller === null) {
+        $caller = $this->apiCallerService->findValidApiCallerByAppId($appId);
+        if (null === $caller) {
             throw new EncryptAppIdNotFoundException();
         }
 
-        return $this->decryptData($cipherText, $caller->getAppSecret(), $caller->getAppId());
+        $appSecret = $caller->getAppSecret();
+        if (null === $appSecret || '' === $appSecret) {
+            throw new EncryptAppSecretMissingException('AppSecret cannot be empty for decryption');
+        }
+
+        return $this->decryptData($cipherText, $appSecret, $caller->getAppId());
     }
 
     public function encryptData(string $rawString, string $signSecret, string $signKey): string
@@ -65,6 +71,9 @@ class Encryptor
 
         // 使用 PKCS7 填充方式进行加密
         $cipherText = openssl_encrypt($rawString, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+        if (false === $cipherText) {
+            throw new EncryptionFailedException('Encryption failed');
+        }
         $cipherText = base64_encode($cipherText); // 将密文转换为 base64 编码
 
         return trim($cipherText);
@@ -76,7 +85,10 @@ class Encryptor
         $iv = md5($signKey, true); // 生成 16 字节的初始向量
 
         // 将密文从 base64 编码转换为二进制数据
-        $cipherText = base64_decode($cipherText);
+        $cipherText = base64_decode($cipherText, true);
+        if (false === $cipherText) {
+            return false;
+        }
 
         // 使用 PKCS7 填充方式进行解密
         return openssl_decrypt($cipherText, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);

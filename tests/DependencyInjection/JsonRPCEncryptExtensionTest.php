@@ -2,23 +2,14 @@
 
 namespace Tourze\JsonRPCEncryptBundle\Tests\DependencyInjection;
 
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tourze\JsonRPCEncryptBundle\DependencyInjection\JsonRPCEncryptExtension;
-use Tourze\JsonRPCEncryptBundle\EventSubscriber\EncryptSubscriber;
-use Tourze\JsonRPCEncryptBundle\Service\Encryptor;
+use Tourze\PHPUnitSymfonyUnitTest\AbstractDependencyInjectionExtensionTestCase;
 
-class JsonRPCEncryptExtensionTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(JsonRPCEncryptExtension::class)]
+final class JsonRPCEncryptExtensionTest extends AbstractDependencyInjectionExtensionTestCase
 {
-    public function testLoad(): void
-    {
-        $extension = new JsonRPCEncryptExtension();
-        $container = new ContainerBuilder();
-
-        $extension->load([], $container);
-
-        // 验证服务定义是否正确加载
-        $this->assertTrue($container->hasDefinition(EncryptSubscriber::class) || $container->hasAlias(EncryptSubscriber::class));
-        $this->assertTrue($container->hasDefinition(Encryptor::class) || $container->hasAlias(Encryptor::class));
-    }
 }

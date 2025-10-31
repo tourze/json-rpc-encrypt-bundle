@@ -2,20 +2,20 @@
 
 namespace Tourze\JsonRPCEncryptBundle\EventSubscriber;
 
+use Monolog\Attribute\WithMonologChannel;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tourze\JsonRPC\Core\Event\RequestStartEvent;
 use Tourze\JsonRPC\Core\Event\ResponseSendingEvent;
 use Tourze\JsonRPCEncryptBundle\Service\Encryptor;
 
-class EncryptSubscriber implements EventSubscriberInterface
+#[WithMonologChannel(channel: 'json_rpc_encrypt')]
+readonly class EncryptEventSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly Encryptor $encryptor,
-        private readonly RequestStack $requestStack,
-        private readonly LoggerInterface $logger,
+        private Encryptor $encryptor,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -38,8 +38,8 @@ class EncryptSubscriber implements EventSubscriberInterface
      */
     public function onRequestStart(RequestStartEvent $event): void
     {
-        $request = $this->requestStack->getMainRequest();
-        if ($request === null) {
+        $request = $event->getRequest();
+        if (null === $request) {
             return;
         }
         if (!$this->encryptor->shouldEncrypt($request)) {
@@ -63,9 +63,9 @@ class EncryptSubscriber implements EventSubscriberInterface
                 'exception' => $exception,
                 'payload' => $requestString,
             ]);
-            throw new NotFoundHttpException('decrypt exception.');
+            throw new NotFoundHttpException('decrypt exception.', previous: $exception);
         }
-        if (!$result) {
+        if (false === $result) {
             throw new NotFoundHttpException('decrypt exception!');
         }
 
@@ -77,8 +77,8 @@ class EncryptSubscriber implements EventSubscriberInterface
      */
     public function onResponseSending(ResponseSendingEvent $event): void
     {
-        $request = $this->requestStack->getMainRequest();
-        if ($request === null) {
+        $request = $event->getRequest();
+        if (null === $request) {
             return;
         }
         if (!$this->encryptor->shouldEncrypt($request)) {

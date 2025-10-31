@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tourze\JsonRPCEncryptBundle\Tests;
 
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Tourze\JsonRPCEncryptBundle\JsonRPCEncryptBundle;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractBundleTestCase;
 
-class JsonRPCEncryptBundleTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(JsonRPCEncryptBundle::class)]
+#[RunTestsInSeparateProcesses]
+final class JsonRPCEncryptBundleTest extends AbstractBundleTestCase
 {
-    public function testBundleInstance(): void
-    {
-        $bundle = new JsonRPCEncryptBundle();
-
-        $this->assertInstanceOf(Bundle::class, $bundle);
-    }
 }
