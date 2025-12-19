@@ -9,7 +9,7 @@ use Tourze\JsonRPCEncryptBundle\Exception\EncryptAppIdNotFoundException;
 use Tourze\JsonRPCEncryptBundle\Exception\EncryptAppSecretMissingException;
 use Tourze\JsonRPCEncryptBundle\Exception\EncryptionFailedException;
 
-class Encryptor
+final class Encryptor
 {
     public const APPID_HEADER = 'Encrypt-AppID';
 

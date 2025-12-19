@@ -6,7 +6,7 @@ namespace Tourze\JsonRPCEncryptBundle\Exception;
 
 use Tourze\JsonRPC\Core\Exception\JsonRpcExceptionInterface;
 
-class EncryptAppIdMissingException extends \Exception implements JsonRpcExceptionInterface
+final class EncryptAppIdMissingException extends \Exception implements JsonRpcExceptionInterface
 {
     /**
      * @param array<string, mixed> $data

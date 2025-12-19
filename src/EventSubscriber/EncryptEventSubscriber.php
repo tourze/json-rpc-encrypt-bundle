@@ -11,7 +11,7 @@ use Tourze\JsonRPC\Core\Event\ResponseSendingEvent;
 use Tourze\JsonRPCEncryptBundle\Service\Encryptor;
 
 #[WithMonologChannel(channel: 'json_rpc_encrypt')]
-readonly class EncryptEventSubscriber implements EventSubscriberInterface
+final readonly class EncryptEventSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private Encryptor $encryptor,
